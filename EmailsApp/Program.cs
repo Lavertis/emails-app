@@ -12,6 +12,14 @@ builder.Services.AddDbContext<EmailsDbContext>(options =>
 
 var app = builder.Build();
 
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<EmailsDbContext>();
+    var seeder = new DataSeeder(context);
+    await seeder.SeedDataAsync();
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
