@@ -1,0 +1,30 @@
+@model IEnumerable<EmailsApp.DTOs.PersonWithFirstEmailDto>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>People</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Address</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var person in Model)
+    {
+        <tr>
+            <td>@person.FirstName</td>
+            <td>@person.LastName</td>
+            <td>@person.EmailAddress</td>
+            <td>@person.Description</td>
+        </tr>
+    }
+    </tbody>
+</table>

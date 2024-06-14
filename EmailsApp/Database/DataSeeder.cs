@@ -14,12 +14,13 @@ public class DataSeeder
 
     public async Task SeedDataAsync()
     {
+        var random = new Random();
         if (!await _context.Persons.AnyAsync())
         {
             var personsFaker = new Bogus.Faker<Person>()
-                .RuleFor(p => p.Imie, f => f.Name.FirstName())
-                .RuleFor(p => p.Nazwisko, f => f.Name.LastName())
-                .RuleFor(p => p.Opis, f => f.Lorem.Paragraph());
+                .RuleFor(p => p.FirstName, f => f.Name.FirstName())
+                .RuleFor(p => p.LastName, f => f.Name.LastName())
+                .RuleFor(p => p.Description, f => f.Lorem.Letter(random.Next(10, 100)));
 
             var persons = personsFaker.Generate(5);
 
@@ -34,9 +35,10 @@ public class DataSeeder
 
             foreach (var person in _context.Persons)
             {
-                var emailsCount = new Random().Next(1, 4);
+                var emailsCount = random.Next(1, 4);
                 var emails = emailsFaker
                     .RuleFor(e => e.PersonId, person.Id)
+                    .RuleFor(e => e.AddedAt, f => f.Date.Past())
                     .Generate(emailsCount);
 
                 await _context.Emails.AddRangeAsync(emails);

@@ -12,7 +12,7 @@ builder.Services.AddDbContext<EmailsDbContext>(options =>
 
 var app = builder.Build();
 
-await using (var scope = app.Services.CreateAsyncScope())
+await using (var scope = app.Services.CreateAsyncScope()) // TODO: use Extension method
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<EmailsDbContext>();

@@ -8,7 +8,10 @@ public class Email
     public int Id { get; set; }
     
     [Column(TypeName = "nvarchar(50)")]
-    public string EmailAddress { get; set; }
+    public required string EmailAddress { get; set; }
+    
+    [Column(TypeName = "datetime2")]
+    public DateTime AddedAt { get; set; }
 
     [ForeignKey(nameof(Person))]
     public int PersonId { get; set; }
