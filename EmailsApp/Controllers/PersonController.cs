@@ -17,7 +17,7 @@ public class PersonController : Controller
     }
 
     [HttpDelete("{personId:int}")]
-    public async Task<IActionResult> Delete(int personId)
+    public async Task<IActionResult> Delete([FromRoute] int personId)
     {
         var person = await _dbContext.Persons.FindAsync(personId);
         if (person == null)
@@ -31,7 +31,7 @@ public class PersonController : Controller
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> Details([FromRoute] int id)
     {
         var person = await _dbContext.Persons
             .Include(p => p.Emails)
@@ -59,16 +59,16 @@ public class PersonController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index([FromQuery] PaginationQuery query)
     {
-        const int descriptionTruncationLength = 20;
+        const int descriptionTruncationLength = 30;
         var personCount = await _dbContext.Persons.CountAsync();
-        var pageCount = (int)Math.Ceiling(personCount / (double)pageSize);
+        var pageCount = (int)Math.Ceiling(personCount / (double)query.PageSize);
 
         var personsWithFirstEmail = await _dbContext.Persons
             .OrderBy(p => p.Id)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .Select(p => new
             {
                 p.Id,
@@ -94,7 +94,7 @@ public class PersonController : Controller
         var model = new PersonListViewModel
         {
             Persons = personWithFirstEmailDtos,
-            Page = page,
+            Page = query.Page,
             PageCount = pageCount
         };
 

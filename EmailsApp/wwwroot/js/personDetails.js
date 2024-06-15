@@ -20,13 +20,13 @@ async function deletePerson({actionUrl, redirectUrl}) {
     }
 }
 
-async function deleteEmail({actionUrl, emailCount}) {
+async function deleteEmail({actionUrl, emailCount, emailAddress}) {
     if (emailCount <= 1) {
         alert('Last email cannot be deleted.');
         return;
     }
 
-    if (confirm('Are you sure you want to delete this email?')) {
+    if (confirm(`Are you sure you want to delete the email address "${emailAddress}"?`)) {
         fetch(actionUrl, {
             method: 'DELETE',
             headers: {
@@ -45,6 +45,30 @@ async function deleteEmail({actionUrl, emailCount}) {
                 alert('An error occurred while deleting the email.');
             });
     }
+}
+
+async function addEmail({actionUrl}) {
+    const form = document.querySelector('#addEmailForm');
+    const formData = new FormData(form);
+
+    fetch(actionUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.fromEntries(formData))
+    })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('An error occurred while adding the email.');
+            }
+        })
+        .catch(error => {
+            console.error('An error occurred while adding the email.', error);
+            alert('An error occurred while adding the email.');
+        });
 }
 
 document.getElementById('editButton').addEventListener('click', function () {

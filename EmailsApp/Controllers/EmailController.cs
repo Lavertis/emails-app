@@ -1,4 +1,5 @@
 using EmailsApp.Database;
+using EmailsApp.DTOs;
 using EmailsApp.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ public class EmailController : Controller
     }
     
     [HttpDelete("{emailId:int}")]
-    public async Task<IActionResult> Delete(int emailId)
+    public async Task<IActionResult> Delete([FromRoute] int emailId)
     {
         var email = await _dbContext.Emails.FindAsync(emailId);
         if (email == null)
@@ -37,11 +38,11 @@ public class EmailController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> AddPersonEmail(int personId, string emailAddress)
+    public async Task<IActionResult> AddPersonEmail([FromBody] AddEmailRequest request)
     {
         var emailAlreadyExists = await _dbContext.Emails
-            .Where(e => e.PersonId == personId)
-            .AnyAsync(e => e.EmailAddress == emailAddress);
+            .Where(e => e.PersonId == request.PersonId)
+            .AnyAsync(e => e.EmailAddress == request.EmailAddress);
         if (emailAlreadyExists)
         {
             return Conflict("Email already added.");
@@ -49,8 +50,8 @@ public class EmailController : Controller
     
         var email = new Email
         {
-            EmailAddress = emailAddress,
-            PersonId = personId
+            EmailAddress = request.EmailAddress,
+            PersonId = request.PersonId
         };
     
         await _dbContext.Emails.AddAsync(email);
