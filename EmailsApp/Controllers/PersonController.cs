@@ -1,13 +1,11 @@
-using System.Diagnostics;
 using EmailsApp.Database;
 using EmailsApp.DTOs;
-using EmailsApp.Entities;
-using EmailsApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmailsApp.Controllers;
 
+[Route("api/[controller]")]
 public class PersonController : Controller
 {
     private readonly EmailsDbContext _dbContext;
@@ -17,51 +15,21 @@ public class PersonController : Controller
         _dbContext = dbContext;
     }
     
-    public async Task<IActionResult> DeleteEmail(int personId, int emailId)
+    [HttpDelete("{personId:int}")]
+    public async Task<IActionResult> Delete(int personId)
     {
-        const int minEmailsCount = 1;
-        var personEmailsCount = await _dbContext.Emails.Where(e => e.PersonId == personId).CountAsync();
-        if (personEmailsCount <= minEmailsCount)
+        var person = await _dbContext.Persons.FindAsync(personId);
+        if (person == null)
         {
-            TempData["ErrorMessage"] = "Person must have at least one email address.";
-            return RedirectToAction(nameof(Details), new { id = personId });
-        }
-        
-        var email = await _dbContext.Emails
-            .Where(e => e.PersonId == personId && e.Id == emailId)
-            .FirstOrDefaultAsync();
-        if (email == null)
-        {
-            return NotFound();
+            return NotFound($"Person with id {personId} not found.");
         }
 
-        _dbContext.Emails.Remove(email);
+        _dbContext.Persons.Remove(person);
         await _dbContext.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Details), new { id = email.PersonId });
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> AddEmail(int personId, string emailAddress)
-    {
-        if (await _dbContext.Emails.AnyAsync(e => e.EmailAddress == emailAddress))
-        {
-            TempData["ErrorMessage"] = "Email address already exists.";
-            return RedirectToAction(nameof(Details), new { id = personId });
-        }
-
-        var email = new Email
-        {
-            EmailAddress = emailAddress,
-            PersonId = personId
-        };
-
-        await _dbContext.Emails.AddAsync(email);
-        await _dbContext.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Details), new { id = personId });
+        return Ok();
     }
 
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> Details(int id)
     {
         var person = await _dbContext.Persons
@@ -89,7 +57,7 @@ public class PersonController : Controller
         return View(personDto);
     }
 
-    public async Task<IActionResult> People()
+    public async Task<IActionResult> Index()
     {
         const int maxDescriptionLength = 20;
         var personsWithFirstEmail = await _dbContext.Persons
@@ -115,11 +83,5 @@ public class PersonController : Controller
                 EmailAddress = p.EmailAddress?.EmailAddress
             });
         return View(personWithFirstEmailDtos);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

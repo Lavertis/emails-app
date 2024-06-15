@@ -20,7 +20,7 @@ public class DataSeeder
             var personsFaker = new Bogus.Faker<Person>()
                 .RuleFor(p => p.FirstName, f => f.Name.FirstName())
                 .RuleFor(p => p.LastName, f => f.Name.LastName())
-                .RuleFor(p => p.Description, f => f.Lorem.Letter(random.Next(10, 100)));
+                .RuleFor(p => p.Description, f => f.Lorem.Paragraphs(random.Next(3, 5)));
 
             var persons = personsFaker.Generate(5);
 

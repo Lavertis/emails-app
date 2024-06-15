@@ -24,9 +24,11 @@ Layout = "_Layout";
             <td>@person.FirstName</td>
             <td>@person.LastName</td>
             <td>@person.EmailAddress</td>
-            <td>@person.Description</td>
+            <td>@person.Description@(person.IsDescriptionTruncated ? "..." : "")</td>
             <td>
-                <a href="@Url.Action("Details", "Person", new { id = person.Id })" class="btn btn-primary">Details</a>
+                <a href="@Url.Action("Details", "Person", new { id = person.Id })" class="btn btn-primary">
+                    <i class="fa-regular fa-eye"></i>
+                </a>
             </td>
         </tr>
     }
