@@ -33,10 +33,10 @@
             </button>
             <button
                 class="btn btn-danger"
-                onclick="confirmPersonDeletion(
-                    '@Url.Action("Delete", "Person", new { personId = Model.Id })',
-                    '@Url.Action("Index", "Person")'
-                )">
+                onclick="deletePerson({
+                    actionUrl: '@Url.Action("Delete", "Person", new { personId = Model.Id })',
+                    redirectUrl: '@Url.Action("Index", "Person")'
+                })">
                 <i class="fa fa-trash"></i>
             </button>
         </div>
@@ -69,69 +69,6 @@
         }
     </div>
 
-    <script>
-        async function confirmPersonDeletion(actionUrl, redirectUrl) {
-            if (confirm('Are you sure you want to delete this person?')) {
-                fetch(actionUrl, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            location.href = redirectUrl;
-                        } else {
-                            alert('An error occurred while deleting the person.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('An error occurred while deleting the person.', error);
-                        alert('An error occurred while deleting the person.');
-                    });
-            }
-        }
-
-    async function confirmEmailDeletion(actionUrl) {
-        console.log(actionUrl);
-        if (@Model.Emails.Count <= 1) {
-            alert('Last email cannot be deleted.');
-            return;
-        }
-
-        if (confirm('Are you sure you want to delete this email?')) {
-            fetch(actionUrl, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('An error occurred while deleting the email.');
-                    }
-                })
-                .catch(error => {
-                    console.error('An error occurred while deleting the email.', error);
-                    alert('An error occurred while deleting the email.');
-                });
-        }
-    }
-
-    document.getElementById('editButton').addEventListener('click', function() {
-        document.getElementById('display').style.display = 'none';
-        document.getElementById('edit').style.display = 'block';
-    });
-
-    function cancelEdit() {
-        document.getElementById('display').style.display = 'block';
-        document.getElementById('edit').style.display = 'none';
-        document.querySelector('#edit form').reset();
-    }
-</script>
-
     <table class="table mt-3">
         <thead>
         <tr>
@@ -147,7 +84,10 @@
                 <td class="text-end">
                     <a
                         href="javascript:void(0);"
-                        onclick="confirmEmailDeletion('@Url.Action("Delete", "Email", new { emailId = email.Id })')"
+                        onclick="deleteEmail({
+                            actionUrl: '@Url.Action("Delete", "Email", new { emailId = email.Id })',
+                            emailCount: @Model.Emails.Count
+                        })"
                         class="btn btn-danger">
                         <i class="fa fa-trash"></i>
                     </a>
@@ -169,3 +109,7 @@
     }
 
 </div>
+
+@section Scripts {
+    <script src="~/js/personDetails.js"></script>
+}
