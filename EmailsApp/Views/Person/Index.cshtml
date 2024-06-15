@@ -1,4 +1,4 @@
-@model IEnumerable<EmailsApp.DTOs.PersonWithFirstEmailDto>
+@model EmailsApp.Models.PersonListViewModel
 
 @{
 ViewBag.Title = "title";
@@ -18,7 +18,7 @@ Layout = "_Layout";
     </tr>
     </thead>
     <tbody>
-    @foreach (var person in Model)
+    @foreach (var person in Model.Persons)
     {
         <tr>
             <td>@person.FirstName</td>
@@ -34,3 +34,28 @@ Layout = "_Layout";
     }
     </tbody>
 </table>
+
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Person", new { page = Model.Page - 1 })">
+                    Previous
+                </a>
+            </li>
+            @for (var i = 1; i <= Model.PageCount; i++)
+            {
+            <li class="page-item @(i == Model.Page ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Person", new { page = i })">
+                    @i
+                </a>
+            </li>
+            }
+            <li class="page-item @(Model.Page == Model.PageCount ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Person", new { page = Model.Page + 1 })">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

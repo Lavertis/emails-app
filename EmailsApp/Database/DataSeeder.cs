@@ -22,7 +22,7 @@ public class DataSeeder
                 .RuleFor(p => p.LastName, f => f.Name.LastName())
                 .RuleFor(p => p.Description, f => f.Lorem.Paragraphs(random.Next(3, 5)));
 
-            var persons = personsFaker.Generate(5);
+            var persons = personsFaker.Generate(25);
 
             await _context.Persons.AddRangeAsync(persons);
             await _context.SaveChangesAsync();

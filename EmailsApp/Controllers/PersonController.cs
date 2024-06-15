@@ -1,5 +1,6 @@
 using EmailsApp.Database;
 using EmailsApp.DTOs;
+using EmailsApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ public class PersonController : Controller
     {
         _dbContext = dbContext;
     }
-    
+
     [HttpDelete("{personId:int}")]
     public async Task<IActionResult> Delete(int personId)
     {
@@ -57,17 +58,24 @@ public class PersonController : Controller
         return View(personDto);
     }
 
-    public async Task<IActionResult> Index()
+    [HttpGet]
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
     {
-        const int maxDescriptionLength = 20;
+        const int descriptionTruncationLength = 20;
+        var personCount = await _dbContext.Persons.CountAsync();
+        var pageCount = (int)Math.Ceiling(personCount / (double)pageSize);
+
         var personsWithFirstEmail = await _dbContext.Persons
+            .OrderBy(p => p.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(p => new
             {
                 p.Id,
                 p.FirstName,
                 p.LastName,
-                IsDescriptionTruncated = p.Description != null && p.Description.Length > maxDescriptionLength,
-                Description = p.Description != null ? p.Description.Substring(0, maxDescriptionLength) : null,
+                IsDescriptionTruncated = p.Description != null && p.Description.Length > descriptionTruncationLength,
+                Description = p.Description != null ? p.Description.Substring(0, descriptionTruncationLength) : null,
                 EmailAddress = p.Emails.OrderBy(e => e.AddedAt).FirstOrDefault()
             })
             .ToListAsync();
@@ -82,6 +90,14 @@ public class PersonController : Controller
                 Description = p.Description,
                 EmailAddress = p.EmailAddress?.EmailAddress
             });
-        return View(personWithFirstEmailDtos);
+
+        var model = new PersonListViewModel
+        {
+            Persons = personWithFirstEmailDtos,
+            Page = page,
+            PageCount = pageCount
+        };
+
+        return View(model);
     }
 }
