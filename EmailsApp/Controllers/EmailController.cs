@@ -15,7 +15,7 @@ public class EmailController : Controller
     {
         _dbContext = dbContext;
     }
-    
+
     [HttpDelete("{emailId:int}")]
     public async Task<IActionResult> Delete([FromRoute] int emailId)
     {
@@ -24,7 +24,7 @@ public class EmailController : Controller
         {
             return NotFound($"Email with id {emailId} not found.");
         }
-        
+
         const int minEmailsCount = 1;
         var personEmailsCount = await _dbContext.Emails.CountAsync(e => e.PersonId == email.PersonId);
         if (personEmailsCount <= minEmailsCount)
@@ -36,7 +36,7 @@ public class EmailController : Controller
         await _dbContext.SaveChangesAsync();
         return Ok();
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> AddPersonEmail([FromBody] AddEmailRequest request)
     {
@@ -47,13 +47,14 @@ public class EmailController : Controller
         {
             return Conflict("Email already added.");
         }
-    
+
         var email = new Email
         {
             EmailAddress = request.EmailAddress,
-            PersonId = request.PersonId
+            PersonId = request.PersonId,
+            AddedAt = DateTime.UtcNow
         };
-    
+
         await _dbContext.Emails.AddAsync(email);
         await _dbContext.SaveChangesAsync();
         return Ok();

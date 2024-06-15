@@ -57,6 +57,25 @@ public class PersonController : Controller
 
         return View(personDto);
     }
+    
+    [HttpPost("{personId:int}")]
+    public async Task<IActionResult> Update([FromRoute] int personId, [FromForm] PersonUpdateDto updateDto)
+    {
+        var person = await _dbContext.Persons.FindAsync(personId);
+        if (person == null)
+        {
+            return NotFound($"Person with id {personId} not found.");
+        }
+        
+        person.FirstName = updateDto.FirstName;
+        person.LastName = updateDto.LastName; 
+        person.Description = updateDto.Description;
+
+        _dbContext.Persons.Update(person);
+        await _dbContext.SaveChangesAsync();
+
+        return RedirectToAction("Details", new { id = personId });
+    }
 
     [HttpGet]
     public async Task<IActionResult> Index([FromQuery] PaginationQuery query)
