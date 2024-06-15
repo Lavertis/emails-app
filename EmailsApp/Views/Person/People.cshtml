@@ -1,8 +1,8 @@
 @model IEnumerable<EmailsApp.DTOs.PersonWithFirstEmailDto>
 
 @{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
+ViewBag.Title = "title";
+Layout = "_Layout";
 }
 
 <h2>People</h2>
@@ -14,6 +14,7 @@
         <th>Last Name</th>
         <th>Email Address</th>
         <th>Description</th>
+        <th></th> <!-- Empty header for the details button -->
     </tr>
     </thead>
     <tbody>
@@ -24,6 +25,9 @@
             <td>@person.LastName</td>
             <td>@person.EmailAddress</td>
             <td>@person.Description</td>
+            <td>
+                <a href="@Url.Action("Details", "Person", new { id = person.Id })" class="btn btn-primary">Details</a>
+            </td>
         </tr>
     }
     </tbody>

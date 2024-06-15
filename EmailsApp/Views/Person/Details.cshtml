@@ -1,0 +1,41 @@
+@model EmailsApp.DTOs.PersonWithEmailsDto
+
+@{
+    ViewBag.Title = "Person Details";
+    Layout = "_Layout";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<h2>@Model.FirstName @Model.LastName</h2>
+
+<p>Description: @Model.Description</p>
+
+<a href="@Url.Action("Edit", "Person", new { id = Model.Id })" class="btn btn-primary">Edit</a>
+<a href="@Url.Action("Delete", "Person", new { id = Model.Id })" class="btn btn-danger">Delete</a>
+
+<h3>Emails</h3>
+
+@foreach (var email in Model.Emails)
+{
+    <p>
+        @email.EmailAddress
+        <a
+            href="@Url.Action("DeleteEmail", "Person", new { personId = Model.Id, emailId = email.Id })"
+            class="btn btn-danger">
+            Delete
+        </a>
+    </p>
+}
+
+@using (Html.BeginForm("AddEmail", "Person", FormMethod.Post))
+{
+    <input type="hidden" name="personId" value="@Model.Id"/>
+    <input type="email" name="emailAddress" required/>
+    <input type="submit" class="btn btn-primary" value="Add Email"/>
+}
