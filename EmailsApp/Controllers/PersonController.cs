@@ -17,6 +17,24 @@ public class PersonController : Controller
         _dbContext = dbContext;
     }
 
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromForm] PersonCreateDto createDto)
+    {
+        var person = new Person
+        {
+            FirstName = createDto.FirstName.Trim(),
+            LastName = createDto.LastName.Trim(),
+            Description = createDto.Description.Trim(),
+            Emails = new List<Email> { new() { EmailAddress = createDto.Email.Trim() } }
+        };
+
+        await _dbContext.Persons.AddAsync(person);
+        await _dbContext.SaveChangesAsync();
+
+        return RedirectToAction("Index");
+    }
+
     [HttpDelete("{personId:int}")]
     public async Task<IActionResult> Delete([FromRoute] int personId)
     {
@@ -43,56 +61,54 @@ public class PersonController : Controller
             return NotFound();
         }
 
-        var personDto = new PersonWithEmailsDto
+        var personDto = new PersonDetailsDto
         {
             Id = person.Id,
             FirstName = person.FirstName,
             LastName = person.LastName,
             Description = person.Description,
-            Emails = person.Emails.OrderBy(e => e.CreatedAt).Select(e => new EmailDto
+        };
+
+        var emails = person.Emails
+            .OrderBy(e => e.CreatedAt)
+            .Select(e => new EmailDto
             {
                 Id = e.Id,
                 EmailAddress = e.EmailAddress
-            }).ToList()
-        };
+            });
 
-        return View(personDto);
+        var viewModel = new PersonDetailsViewModel { Person = personDto, Emails = emails.ToList() };
+        return View(viewModel);
     }
-    
-    [HttpPost]
-    public async Task<IActionResult> Create([FromForm] PersonCreateDto createDto)
+
+
+    [HttpPost("update")]
+    public async Task<IActionResult> Update(PersonDetailsViewModel viewModel)
     {
-        var person = new Person
+        if (!ModelState.IsValid)
         {
-            FirstName = createDto.FirstName.Trim(),
-            LastName = createDto.LastName.Trim(),
-            Description = createDto.Description.Trim(),
-            Emails = new List<Email> { new() { EmailAddress = createDto.Email.Trim() } }
-        };
+            viewModel.Emails = await _dbContext.Emails
+                .Where(e => e.PersonId == viewModel.Person.Id)
+                .OrderBy(e => e.CreatedAt)
+                .Select(e => new EmailDto { Id = e.Id, EmailAddress = e.EmailAddress })
+                .ToListAsync();
+            return View("Details", viewModel);
+        }
 
-        await _dbContext.Persons.AddAsync(person);
-        await _dbContext.SaveChangesAsync();
-
-        return RedirectToAction("Index");
-    }
-    
-    [HttpPost("{personId:int}")]
-    public async Task<IActionResult> Update([FromRoute] int personId, [FromForm] PersonUpdateDto updateDto)
-    {
-        var person = await _dbContext.Persons.FindAsync(personId);
+        var person = await _dbContext.Persons.FindAsync(viewModel.Person.Id);
         if (person == null)
         {
-            return NotFound($"Person with id {personId} not found.");
+            return NotFound($"Person with id {viewModel.Person.Id} not found.");
         }
-        
-        person.FirstName = updateDto.FirstName.Trim();
-        person.LastName = updateDto.LastName.Trim(); 
-        person.Description = updateDto.Description.Trim();
+
+        person.FirstName = viewModel.Person.FirstName.Trim();
+        person.LastName = viewModel.Person.LastName.Trim();
+        person.Description = viewModel.Person.Description?.Trim();
 
         _dbContext.Persons.Update(person);
         await _dbContext.SaveChangesAsync();
-
-        return RedirectToAction("Details", new { id = personId });
+        
+        return RedirectToAction("Details", new { id = viewModel.Person.Id });
     }
 
     [HttpGet]

@@ -1,4 +1,4 @@
-@model EmailsApp.DTOs.PersonWithEmailsDto
+@model PersonDetailsViewModel
 
 <div class="d-flex gap-2">
     @{
@@ -8,7 +8,7 @@
     <div class="w-50">
         @using (Html.BeginForm("AddPersonEmail", "Email", FormMethod.Post, new { id = "addEmailForm" }))
         {
-            <input type="hidden" name="personId" value="@Model.Id"/>
+            <input type="hidden" name="personId" value="@Model.Person.Id"/>
             <div class="input-group px-1">
                 <input
                     id="emailAddress"

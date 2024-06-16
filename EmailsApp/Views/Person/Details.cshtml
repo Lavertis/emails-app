@@ -1,4 +1,4 @@
-@model EmailsApp.DTOs.PersonWithEmailsDto
+@model PersonDetailsViewModel
 
 @{
     ViewBag.Title = "Person Details";
@@ -15,10 +15,10 @@
     }
 
     <h2 class="text-center">Person</h2>
-    <div id="display">
-        @await Html.PartialAsync("Components/Details/PersonDetails", Model)
+    <div id="display" style="@(Model.IsEditMode ? "display: none;" : "")">
+        @await Html.PartialAsync("Components/Details/PersonDetails", Model.Person)
     </div>
-    <div id="edit" style="display: none;">
+    <div id="edit" style="@(Model.IsEditMode ? "" : "display: none;")">
         @await Html.PartialAsync("Components/Details/PersonEditForm", Model)
     </div>
 
