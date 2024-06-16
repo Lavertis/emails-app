@@ -19,7 +19,7 @@ async function deletePerson({actionUrl, redirectUrl}) {
     });
 }
 
-async function deleteEmail({actionUrl, emailCount, emailAddress}) {
+async function deleteEmail({actionUrl, emailAddress}) {
     const isConfirmed = await showAlert({
         label: 'Confirmation',
         message: `Are you sure you want to delete the email address "${emailAddress}"?`,
@@ -40,7 +40,7 @@ async function deleteEmail({actionUrl, emailCount, emailAddress}) {
     });
 }
 
-function onSubmit(event) {
+$('#addEmailForm').submit(function (event) {
     event.preventDefault();
 
     const actionUrl = $(event.target).attr('action');
@@ -57,17 +57,9 @@ function onSubmit(event) {
             showAlert({label: 'Error', message: error.responseText});
         }
     });
-}
-
-$('#addEmailForm').submit(onSubmit);
+});
 
 $('#editButton').click(function () {
     $('#display').hide();
     $('#edit').show();
 });
-
-function cancelEdit() {
-    $('#display').show();
-    $('#edit').hide();
-    $('#edit form')[0].reset();
-}
