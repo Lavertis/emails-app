@@ -1,6 +1,6 @@
 namespace EmailsApp.DTOs;
 
-public class PersonWithFirstEmailDto
+public class PersonListItemDto
 {
     public int Id { get; init; }
     public required string FirstName { get; init; }

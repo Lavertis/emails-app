@@ -118,7 +118,7 @@ public class PersonController : Controller
             .ToListAsync();
 
         var personWithFirstEmailDtos = personsWithFirstEmail
-            .Select(p => new PersonWithFirstEmailDto
+            .Select(p => new PersonListItemDto
             {
                 Id = p.Id,
                 FirstName = p.FirstName,
@@ -128,9 +128,9 @@ public class PersonController : Controller
                 EmailAddress = p.EmailAddress?.EmailAddress
             });
 
-        var model = new PersonListViewModel
+        var model = new ListViewModel<PersonListItemDto>
         {
-            Persons = personWithFirstEmailDtos,
+            Items = personWithFirstEmailDtos,
             Page = query.Page,
             PageCount = pageCount
         };
