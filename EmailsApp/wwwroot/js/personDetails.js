@@ -1,38 +1,43 @@
-function deletePerson({actionUrl, redirectUrl}) {
-    if (confirm('Are you sure you want to delete this person?')) {
-        $.ajax({
-            url: actionUrl,
-            type: 'DELETE',
-            contentType: 'application/json',
-            success: function () {
-                window.location.href = redirectUrl;
-            },
-            error: function () {
-                showAlert({label: 'Error', message: 'An error occurred while deleting the person.'});
-            }
-        });
-    }
+async function deletePerson({actionUrl, redirectUrl}) {
+    const isConfirmed = await showAlert({
+        label: 'Confirmation',
+        message: 'Are you sure you want to delete this person?',
+        isConfirm: true
+    });
+    if (!isConfirmed) return;
+
+    $.ajax({
+        url: actionUrl,
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function () {
+            window.location.href = redirectUrl;
+        },
+        error: function () {
+            showAlert({label: 'Error', message: 'An error occurred while deleting the person.'});
+        }
+    });
 }
 
-function deleteEmail({actionUrl, emailCount, emailAddress}) {
-    if (emailCount <= 1) {
-        showAlert({label: 'Error', message: 'Last email cannot be deleted.'});
-        return;
-    }
+async function deleteEmail({actionUrl, emailCount, emailAddress}) {
+    const isConfirmed = await showAlert({
+        label: 'Confirmation',
+        message: `Are you sure you want to delete the email address "${emailAddress}"?`,
+        isConfirm: true
+    });
+    if (!isConfirmed) return;
 
-    if (confirm(`Are you sure you want to delete the email address "${emailAddress}"?`)) {
-        $.ajax({
-            url: actionUrl,
-            type: 'DELETE',
-            contentType: 'application/json',
-            success: function () {
-                location.reload();
-            },
-            error: function () {
-                showAlert({label: 'Error', message: 'An error occurred while deleting the email.'});
-            }
-        });
-    }
+    $.ajax({
+        url: actionUrl,
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function () {
+            location.reload();
+        },
+        error: function () {
+            showAlert({label: 'Error', message: 'An error occurred while deleting the email.'});
+        }
+    });
 }
 
 function onSubmit(event) {

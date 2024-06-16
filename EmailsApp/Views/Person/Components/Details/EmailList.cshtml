@@ -9,15 +9,18 @@
         <tr>
             <td>@email.EmailAddress</td>
             <td class="text-end">
-                <a
-                    onclick="deleteEmail({
-                            actionUrl: '@Url.Action("Delete", "Email", new { emailId = email.Id })',
-                            emailCount: @Model.Count,
-                            emailAddress: '@email.EmailAddress'
+                @if (Model.Count > 1)
+                {
+                    <a
+                        onclick="deleteEmail({
+                        actionUrl: '@Url.Action("Delete", "Email", new { emailId = email.Id })',
+                        emailCount: @Model.Count,
+                        emailAddress: '@email.EmailAddress'
                         })"
-                    class="btn btn-danger btn-sm">
-                    <i class="fa-solid fa-xmark"></i>
-                </a>
+                        class="btn btn-danger btn-sm">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                }
             </td>
         </tr>
     }
