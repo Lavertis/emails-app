@@ -1,5 +1,6 @@
 using EmailsApp.Database;
 using EmailsApp.DTOs;
+using EmailsApp.Entities;
 using EmailsApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,7 @@ public class PersonController : Controller
             FirstName = person.FirstName,
             LastName = person.LastName,
             Description = person.Description,
-            Emails = person.Emails.Select(e => new EmailDto
+            Emails = person.Emails.OrderBy(e => e.CreatedAt).Select(e => new EmailDto
             {
                 Id = e.Id,
                 EmailAddress = e.EmailAddress
@@ -56,6 +57,23 @@ public class PersonController : Controller
         };
 
         return View(personDto);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create([FromForm] PersonCreateDto createDto)
+    {
+        var person = new Person
+        {
+            FirstName = createDto.FirstName,
+            LastName = createDto.LastName,
+            Description = createDto.Description,
+            Emails = new List<Email> { new() { EmailAddress = createDto.Email } }
+        };
+
+        await _dbContext.Persons.AddAsync(person);
+        await _dbContext.SaveChangesAsync();
+
+        return RedirectToAction("Index");
     }
     
     [HttpPost("{personId:int}")]

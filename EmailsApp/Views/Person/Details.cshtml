@@ -70,6 +70,8 @@
             </div>
         }
     </div>
+    
+    <hr/>
 
     <h3 class="mt-3">Emails</h3>
     <table class="table mt-3 table-sm">
@@ -107,10 +109,11 @@
                     var isEmailLimitReached = Model.Emails.Count >= maxEmails;
                 }
                 <input
+                    id="emailAddress"
                     type="email"
                     class="form-control"
                     name="emailAddress"
-                    placeholder="New email"
+                    placeholder="Email address"
                     required @(isEmailLimitReached ? "disabled" : "")>
                 <button
                     type="button"
