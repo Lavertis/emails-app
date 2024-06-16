@@ -5,9 +5,9 @@ namespace EmailsApp.Database;
 
 public class DataSeeder
 {
-    private readonly EmailsDbContext _context;
+    private readonly AppDbContext _context;
 
-    public DataSeeder(EmailsDbContext context)
+    public DataSeeder(AppDbContext context)
     {
         _context = context;
     }
@@ -38,7 +38,6 @@ public class DataSeeder
                 var emailsCount = random.Next(1, 4);
                 var emails = emailsFaker
                     .RuleFor(e => e.PersonId, person.Id)
-                    .RuleFor(e => e.AddedAt, f => f.Date.Past())
                     .Generate(emailsCount);
 
                 await _context.Emails.AddRangeAsync(emails);

@@ -9,9 +9,9 @@ namespace EmailsApp.Controllers;
 [Route("api/[controller]")]
 public class PersonController : Controller
 {
-    private readonly EmailsDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-    public PersonController(EmailsDbContext dbContext)
+    public PersonController(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -85,7 +85,7 @@ public class PersonController : Controller
         var pageCount = (int)Math.Ceiling(personCount / (double)query.PageSize);
 
         var personsWithFirstEmail = await _dbContext.Persons
-            .OrderBy(p => p.Id)
+            .OrderByDescending(p => p.Id)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .Select(p => new
@@ -95,7 +95,7 @@ public class PersonController : Controller
                 p.LastName,
                 IsDescriptionTruncated = p.Description != null && p.Description.Length > descriptionTruncationLength,
                 Description = p.Description != null ? p.Description.Substring(0, descriptionTruncationLength) : null,
-                EmailAddress = p.Emails.OrderBy(e => e.AddedAt).FirstOrDefault()
+                EmailAddress = p.Emails.OrderBy(e => e.CreatedAt).FirstOrDefault()
             })
             .ToListAsync();
 

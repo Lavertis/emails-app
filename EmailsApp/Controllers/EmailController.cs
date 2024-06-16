@@ -9,9 +9,9 @@ namespace EmailsApp.Controllers;
 [Route("api/[controller]")]
 public class EmailController : Controller
 {
-    private readonly EmailsDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-    public EmailController(EmailsDbContext dbContext)
+    public EmailController(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -51,8 +51,7 @@ public class EmailController : Controller
         var email = new Email
         {
             EmailAddress = request.EmailAddress,
-            PersonId = request.PersonId,
-            AddedAt = DateTime.UtcNow
+            PersonId = request.PersonId
         };
 
         await _dbContext.Emails.AddAsync(email);

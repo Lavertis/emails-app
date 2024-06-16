@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EmailsApp.Entities;
 
 [Table("Persons")]
-public class Person
+public class Person : BaseEntity
 {
-    public int Id { get; set; }
-    
     [Column(TypeName = "nvarchar(50)")]
     public required string FirstName { get; set; }
     
