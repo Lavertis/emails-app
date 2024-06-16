@@ -40,12 +40,11 @@ public class EmailController : Controller
     [HttpPost]
     public async Task<IActionResult> AddPersonEmail([FromBody] AddEmailRequest request)
     {
-        var emailAlreadyExists = await _dbContext.Emails
-            .Where(e => e.PersonId == request.PersonId)
-            .AnyAsync(e => e.EmailAddress == request.EmailAddress);
+        request.EmailAddress = request.EmailAddress.Trim();
+        var emailAlreadyExists = await _dbContext.Emails.AnyAsync(e => e.EmailAddress == request.EmailAddress);
         if (emailAlreadyExists)
         {
-            return Conflict("Email already added.");
+            return Conflict("Email already exists.");
         }
 
         var email = new Email

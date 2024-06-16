@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmailsApp.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240616091751_InitialCreate")]
+    [Migration("20240616152236_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,6 +47,9 @@ namespace EmailsApp.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
 
                     b.HasIndex("PersonId");
 

@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailsApp.Entities;
 
 [Table("Emails")]
+[Index(nameof(EmailAddress), IsUnique = true)]
 public class Email : BaseEntity
 {
     [Column(TypeName = "nvarchar(254)")]

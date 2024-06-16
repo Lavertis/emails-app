@@ -64,10 +64,10 @@ public class PersonController : Controller
     {
         var person = new Person
         {
-            FirstName = createDto.FirstName,
-            LastName = createDto.LastName,
-            Description = createDto.Description,
-            Emails = new List<Email> { new() { EmailAddress = createDto.Email } }
+            FirstName = createDto.FirstName.Trim(),
+            LastName = createDto.LastName.Trim(),
+            Description = createDto.Description.Trim(),
+            Emails = new List<Email> { new() { EmailAddress = createDto.Email.Trim() } }
         };
 
         await _dbContext.Persons.AddAsync(person);
@@ -85,9 +85,9 @@ public class PersonController : Controller
             return NotFound($"Person with id {personId} not found.");
         }
         
-        person.FirstName = updateDto.FirstName;
-        person.LastName = updateDto.LastName; 
-        person.Description = updateDto.Description;
+        person.FirstName = updateDto.FirstName.Trim();
+        person.LastName = updateDto.LastName.Trim(); 
+        person.Description = updateDto.Description.Trim();
 
         _dbContext.Persons.Update(person);
         await _dbContext.SaveChangesAsync();

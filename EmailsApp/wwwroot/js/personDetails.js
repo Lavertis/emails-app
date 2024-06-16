@@ -1,83 +1,70 @@
-async function deletePerson({actionUrl, redirectUrl}) {
+function deletePerson({actionUrl, redirectUrl}) {
     if (confirm('Are you sure you want to delete this person?')) {
-        fetch(actionUrl, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    location.href = redirectUrl;
-                } else {
-                    alert('An error occurred while deleting the person.');
-                }
-            })
-            .catch(error => {
-                console.error('An error occurred while deleting the person.', error);
+        $.ajax({
+            url: actionUrl,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function () {
+                window.location.href = redirectUrl;
+            },
+            error: function () {
                 alert('An error occurred while deleting the person.');
-            });
+            }
+        });
     }
 }
 
-async function deleteEmail({actionUrl, emailCount, emailAddress}) {
+function deleteEmail({actionUrl, emailCount, emailAddress}) {
     if (emailCount <= 1) {
         alert('Last email cannot be deleted.');
         return;
     }
 
     if (confirm(`Are you sure you want to delete the email address "${emailAddress}"?`)) {
-        fetch(actionUrl, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    location.reload();
-                } else {
-                    alert('An error occurred while deleting the email.');
-                }
-            })
-            .catch(error => {
-                console.error('An error occurred while deleting the email.', error);
+        $.ajax({
+            url: actionUrl,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function () {
+                location.reload();
+            },
+            error: function () {
                 alert('An error occurred while deleting the email.');
-            });
+            }
+        });
     }
 }
 
-async function addEmail({actionUrl}) {
-    const form = document.querySelector('#addEmailForm');
-    const formData = new FormData(form);
 
-    fetch(actionUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.fromEntries(formData))
-    })
-        .then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert('An error occurred while adding the email.');
-            }
-        })
-        .catch(error => {
-            console.error('An error occurred while adding the email.', error);
-            alert('An error occurred while adding the email.');
-        });
+function onSubmit(event) {
+    event.preventDefault();
+
+    const actionUrl = $(event.target).attr('action');
+    const formData = Object.fromEntries(new FormData(event.target));
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        async: false,
+        success: () => location.reload(),
+        error: function (error) {
+            alert(error.responseText);
+        }
+    });
 }
 
-document.getElementById('editButton').addEventListener('click', function () {
-    document.getElementById('display').style.display = 'none';
-    document.getElementById('edit').style.display = 'block';
+$('#addEmailForm').submit(onSubmit);
+
+
+$('#editButton').click(function () {
+    $('#display').hide();
+    $('#edit').show();
 });
 
 function cancelEdit() {
-    document.getElementById('display').style.display = 'block';
-    document.getElementById('edit').style.display = 'none';
-    document.querySelector('#edit form').reset();
+    $('#display').show();
+    $('#edit').hide();
+    $('#edit form')[0].reset();
 }

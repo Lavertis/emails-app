@@ -51,6 +51,12 @@ namespace EmailsApp.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Emails_EmailAddress",
+                table: "Emails",
+                column: "EmailAddress",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Emails_PersonId",
                 table: "Emails",
                 column: "PersonId");

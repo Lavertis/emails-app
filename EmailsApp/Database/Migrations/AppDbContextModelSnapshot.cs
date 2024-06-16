@@ -45,6 +45,9 @@ namespace EmailsApp.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
+
                     b.HasIndex("PersonId");
 
                     b.ToTable("Emails");
