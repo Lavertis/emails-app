@@ -8,7 +8,7 @@ function deletePerson({actionUrl, redirectUrl}) {
                 window.location.href = redirectUrl;
             },
             error: function () {
-                alert('An error occurred while deleting the person.');
+                showAlert({label: 'Error', message: 'An error occurred while deleting the person.'});
             }
         });
     }
@@ -16,7 +16,7 @@ function deletePerson({actionUrl, redirectUrl}) {
 
 function deleteEmail({actionUrl, emailCount, emailAddress}) {
     if (emailCount <= 1) {
-        alert('Last email cannot be deleted.');
+        showAlert({label: 'Error', message: 'Last email cannot be deleted.'});
         return;
     }
 
@@ -29,12 +29,11 @@ function deleteEmail({actionUrl, emailCount, emailAddress}) {
                 location.reload();
             },
             error: function () {
-                alert('An error occurred while deleting the email.');
+                showAlert({label: 'Error', message: 'An error occurred while deleting the email.'});
             }
         });
     }
 }
-
 
 function onSubmit(event) {
     event.preventDefault();
@@ -50,13 +49,12 @@ function onSubmit(event) {
         async: false,
         success: () => location.reload(),
         error: function (error) {
-            alert(error.responseText);
+            showAlert({label: 'Error', message: error.responseText});
         }
     });
 }
 
 $('#addEmailForm').submit(onSubmit);
-
 
 $('#editButton').click(function () {
     $('#display').hide();

@@ -1,0 +1,31 @@
+@model EmailsApp.DTOs.PersonWithEmailsDto
+
+<div class="d-flex gap-2">
+    @{
+        const int maxEmails = 5;
+        var isEmailLimitReached = Model.Emails.Count >= maxEmails;
+    }
+    <div class="w-50">
+        @using (Html.BeginForm("AddPersonEmail", "Email", FormMethod.Post, new { id = "addEmailForm" }))
+        {
+            <input type="hidden" name="personId" value="@Model.Id"/>
+            <div class="input-group px-1">
+                <input
+                    id="emailAddress"
+                    type="email"
+                    class="form-control"
+                    name="emailAddress"
+                    placeholder="Email address"
+                    required
+                    @(isEmailLimitReached ? "disabled" : "")>
+                <button type="submit" class="btn btn-primary" @(isEmailLimitReached ? "disabled" : "")>
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+        }
+    </div>
+    @if (isEmailLimitReached)
+    {
+        <p class="my-auto text-muted">You can add up to @maxEmails emails.</p>
+    }
+</div>
