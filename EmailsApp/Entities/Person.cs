@@ -12,7 +12,7 @@ public class Person : BaseEntity
     public required string LastName { get; set; }
     
     [Column(TypeName = "nvarchar(max)")]
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 
     public ICollection<Email> Emails { get; set; }
 }

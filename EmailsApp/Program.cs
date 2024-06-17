@@ -1,3 +1,4 @@
+using EmailsApp.Config.AutoMapper;
 using EmailsApp.Config.Binders;
 using EmailsApp.Database;
 using EmailsApp.Database.Seeders;
@@ -8,6 +9,7 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.ModelBinderProviders.Insert(0, new TrimmingModelBinderProvider());
 });
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );

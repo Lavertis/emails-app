@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmailsApp.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240616152236_InitialCreate")]
+    [Migration("20240617225122_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -68,6 +68,7 @@ namespace EmailsApp.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")

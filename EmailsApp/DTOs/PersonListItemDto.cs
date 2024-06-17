@@ -2,10 +2,10 @@ namespace EmailsApp.DTOs;
 
 public class PersonListItemDto
 {
-    public int Id { get; init; }
-    public required string FirstName { get; init; }
-    public required string LastName { get; init; }
-    public bool IsDescriptionTruncated { get; init; }
-    public string? Description { get; init; }
-    public string? EmailAddress { get; init; }
+    public int Id { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+    public bool IsDescriptionTruncated { get; set; }
+    public required string Description { get; set; }
+    public string? EmailAddress { get; set; }
 }

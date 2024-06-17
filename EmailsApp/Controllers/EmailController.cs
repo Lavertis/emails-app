@@ -1,3 +1,4 @@
+using AutoMapper;
 using EmailsApp.Database;
 using EmailsApp.DTOs;
 using EmailsApp.Entities;
@@ -10,10 +11,12 @@ namespace EmailsApp.Controllers;
 public class EmailController : Controller
 {
     private readonly AppDbContext _dbContext;
+    private readonly IMapper _mapper;
 
-    public EmailController(AppDbContext dbContext)
+    public EmailController(AppDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     [HttpDelete("{id:int}")]
@@ -46,12 +49,7 @@ public class EmailController : Controller
             return Conflict("Email already exists.");
         }
 
-        var email = new Email
-        {
-            EmailAddress = request.EmailAddress,
-            PersonId = request.PersonId
-        };
-
+        var email = _mapper.Map<Email>(request);
         await _dbContext.Emails.AddAsync(email);
         await _dbContext.SaveChangesAsync();
         return Ok();
@@ -63,7 +61,7 @@ public class EmailController : Controller
         var emails = await _dbContext.Emails
             .Where(e => e.PersonId == personId)
             .OrderBy(e => e.CreatedAt)
-            .Select(e => new EmailDto { Id = e.Id, EmailAddress = e.EmailAddress })
+            .Select(e => _mapper.Map<EmailDto>(e))
             .ToListAsync();
         return Ok(emails);
     }
