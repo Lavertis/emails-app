@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmailsApp.Controllers;
 
-[Route("api/[controller]")]
 public class EmailController : Controller
 {
     private readonly AppDbContext _dbContext;
@@ -38,7 +37,7 @@ public class EmailController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddPersonEmail([FromBody] AddEmailRequest request)
+    public async Task<IActionResult> Create([FromBody] AddEmailRequest request)
     {
         request.EmailAddress = request.EmailAddress.Trim();
         var emailAlreadyExists = await _dbContext.Emails.AnyAsync(e => e.EmailAddress == request.EmailAddress);

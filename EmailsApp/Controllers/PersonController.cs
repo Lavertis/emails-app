@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmailsApp.Controllers;
 
-[Route("api/[controller]")]
 public class PersonController : Controller
 {
     private readonly AppDbContext _dbContext;
@@ -16,23 +15,35 @@ public class PersonController : Controller
     {
         _dbContext = dbContext;
     }
-
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromForm] PersonCreateDto createDto)
+    
+    [HttpGet]
+    public IActionResult Create()
     {
+        return View();
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create([FromForm] PersonCreateViewModel createViewModel)
+    {
+        var emailExists = await _dbContext.Emails.AnyAsync(e => e.EmailAddress == createViewModel.Email);
+        if (emailExists)
+            ModelState.AddModelError("Email", "Email already exists.");
+        if (!ModelState.IsValid)
+        {
+            return View("Create", createViewModel);
+        }
+        
         var person = new Person
         {
-            FirstName = createDto.FirstName.Trim(),
-            LastName = createDto.LastName.Trim(),
-            Description = createDto.Description.Trim(),
-            Emails = new List<Email> { new() { EmailAddress = createDto.Email.Trim() } }
+            FirstName = createViewModel.FirstName.Trim(),
+            LastName = createViewModel.LastName.Trim(),
+            Description = createViewModel.Description?.Trim(),
+            Emails = new List<Email> { new() { EmailAddress = createViewModel.Email.Trim() } }
         };
 
-        await _dbContext.Persons.AddAsync(person);
+        var entityEntry = await _dbContext.Persons.AddAsync(person);
         await _dbContext.SaveChangesAsync();
-
-        return RedirectToAction("Index");
+        return RedirectToAction("Details", new { id = entityEntry.Entity.Id });
     }
 
     [HttpDelete("{personId:int}")]
@@ -107,7 +118,7 @@ public class PersonController : Controller
 
         _dbContext.Persons.Update(person);
         await _dbContext.SaveChangesAsync();
-        
+
         return RedirectToAction("Details", new { id = viewModel.Person.Id });
     }
 

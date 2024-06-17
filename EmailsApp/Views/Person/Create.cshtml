@@ -1,0 +1,41 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PersonCreateViewModel
+
+@{
+    ViewBag.Title = "Add Person";
+    Layout = "_Layout";
+}
+
+<div class="col-11 col-lg-10 col-xl-8 col-xxl-6 mx-auto">
+    <form method="post" asp-action="Create" asp-controller="Person" class="w-100">
+        <div class="form-content">
+            <h5 class="form-title" id="addPersonFormLabel">Add New Person</h5>
+            <div class="form-body">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstName" asp-for="@Model.FirstName" required>
+                    <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" asp-for="@Model.LastName" required>
+                    <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" asp-for="@Model.Description"></textarea>
+                    <span asp-validation-for="@Model.Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" asp-for="@Model.Email" required>
+                    <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-footer d-flex justify-content-end gap-1">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="reset" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>

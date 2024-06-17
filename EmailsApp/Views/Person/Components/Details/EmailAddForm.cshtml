@@ -6,7 +6,7 @@
         var isEmailLimitReached = Model.Emails.Count >= maxEmails;
     }
     <div class="w-50">
-        @using (Html.BeginForm("AddPersonEmail", "Email", FormMethod.Post, new { id = "addEmailForm" }))
+        @using (Html.BeginForm("Create", "Email", FormMethod.Post, new { id = "addEmailForm" }))
         {
             <input type="hidden" name="personId" value="@Model.Person.Id"/>
             <div class="input-group px-1">
