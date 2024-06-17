@@ -39,7 +39,6 @@ public class EmailController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] AddEmailRequest request)
     {
-        request.EmailAddress = request.EmailAddress.Trim();
         var emailAlreadyExists = await _dbContext.Emails.AnyAsync(e => e.EmailAddress == request.EmailAddress);
         if (emailAlreadyExists)
         {

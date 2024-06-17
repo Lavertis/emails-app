@@ -35,10 +35,10 @@ public class PersonController : Controller
         
         var person = new Person
         {
-            FirstName = createViewModel.FirstName.Trim(),
-            LastName = createViewModel.LastName.Trim(),
-            Description = createViewModel.Description?.Trim(),
-            Emails = new List<Email> { new() { EmailAddress = createViewModel.Email.Trim() } }
+            FirstName = createViewModel.FirstName,
+            LastName = createViewModel.LastName,
+            Description = createViewModel.Description,
+            Emails = new List<Email> { new() { EmailAddress = createViewModel.Email } }
         };
 
         var entityEntry = await _dbContext.Persons.AddAsync(person);
@@ -112,9 +112,9 @@ public class PersonController : Controller
             return NotFound($"Person with id {viewModel.Person.Id} not found.");
         }
 
-        person.FirstName = viewModel.Person.FirstName.Trim();
-        person.LastName = viewModel.Person.LastName.Trim();
-        person.Description = viewModel.Person.Description?.Trim();
+        person.FirstName = viewModel.Person.FirstName;
+        person.LastName = viewModel.Person.LastName;
+        person.Description = viewModel.Person.Description;
 
         _dbContext.Persons.Update(person);
         await _dbContext.SaveChangesAsync();
