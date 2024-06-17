@@ -5,15 +5,7 @@
     Layout = "_Layout";
 }
 
-
 <div class="col-11 col-md-10 col-lg-9 col-xl-8 col-xxl-7 mx-auto">
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger text-center" role="alert">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     <h2 class="text-center">Person</h2>
     <div id="display" style="@(Model.IsEditMode ? "display: none;" : "")">
         @await Html.PartialAsync("Components/Details/PersonDetails", Model.Person)
@@ -21,14 +13,40 @@
     <div id="edit" style="@(Model.IsEditMode ? "" : "display: none;")">
         @await Html.PartialAsync("Components/Details/PersonEditForm", Model)
     </div>
-
     <hr/>
-
     <h3 class="mt-3">Emails</h3>
-    @await Html.PartialAsync("Components/Details/EmailList", Model.Emails)
-    @await Html.PartialAsync("Components/Details/EmailAddForm", Model)
+    @await Html.PartialAsync("Components/Details/PersonEmails", Model)
 </div>
 
 @section Scripts {
     <script src="~/js/personDetails.js"></script>
+    <script>
+    $(document).ready(function() {
+        const getEmailsUrl = '@Url.Action("GetEmails", "Email", new { personId = Model.Person.Id })';
+        $.getJSON(getEmailsUrl, function(data) {
+            $.each(data, function(key, email) {
+                const deleteEmailUrl = '@Url.Action("Delete", "Email", new { id = -1 })'.replace("-1", email.id);
+                let rowHtml = '<tr>' +
+                    '<td>' + email.emailAddress + '</td>' +
+                    '<td class="text-end">';
+
+                if (data.length > 1) {
+                    rowHtml += '<a onclick="deleteEmail({ actionUrl: \'' + deleteEmailUrl +
+                        '\', emailAddress: \'' + email.emailAddress + '\' })" class="btn btn-danger btn-sm">' +
+                        '<i class="fa-solid fa-xmark"></i>' +
+                        '</a>';
+                }
+                
+                rowHtml += '</td></tr>'
+                $('#emailsTable tbody').append(rowHtml);
+            });
+            const maxEmails = 5;
+            if (data.length >= maxEmails) {
+                $('#emailAddress').prop('disabled', true);
+                $('#addEmailButton').prop('disabled', true);
+                $('#emailLimitMessage').show();
+            }
+        });
+    });
+</script>
 }

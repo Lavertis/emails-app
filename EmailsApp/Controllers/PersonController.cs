@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmailsApp.Controllers;
 
+[Route("[controller]")]
 public class PersonController : Controller
 {
     private readonly AppDbContext _dbContext;
@@ -16,13 +17,13 @@ public class PersonController : Controller
         _dbContext = dbContext;
     }
     
-    [HttpGet]
+    [HttpGet("[action]")]
     public IActionResult Create()
     {
         return View();
     }
     
-    [HttpPost]
+    [HttpPost("[action]")]
     public async Task<IActionResult> Create([FromForm] PersonCreateViewModel createViewModel)
     {
         var emailExists = await _dbContext.Emails.AnyAsync(e => e.EmailAddress == createViewModel.Email);
@@ -93,16 +94,11 @@ public class PersonController : Controller
     }
 
 
-    [HttpPost("update")]
+    [HttpPost("[action]")]
     public async Task<IActionResult> Update(PersonDetailsViewModel viewModel)
     {
         if (!ModelState.IsValid)
         {
-            viewModel.Emails = await _dbContext.Emails
-                .Where(e => e.PersonId == viewModel.Person.Id)
-                .OrderBy(e => e.CreatedAt)
-                .Select(e => new EmailDto { Id = e.Id, EmailAddress = e.EmailAddress })
-                .ToListAsync();
             return View("Details", viewModel);
         }
 

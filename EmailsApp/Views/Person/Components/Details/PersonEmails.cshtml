@@ -1,10 +1,11 @@
 @model PersonDetailsViewModel
 
+<table id="emailsTable" class="table mt-3 table-sm">
+    <tbody>
+    </tbody>
+</table>
+
 <div class="d-flex gap-2">
-    @{
-        const int maxEmails = 5;
-        var isEmailLimitReached = Model.Emails.Count >= maxEmails;
-    }
     <div class="w-50">
         @using (Html.BeginForm("Create", "Email", FormMethod.Post, new { id = "addEmailForm" }))
         {
@@ -16,16 +17,13 @@
                     class="form-control"
                     name="emailAddress"
                     placeholder="Email address"
-                    required
-                    @(isEmailLimitReached ? "disabled" : "")>
-                <button type="submit" class="btn btn-primary" @(isEmailLimitReached ? "disabled" : "")>
+                    required>
+                <button type="submit" class="btn btn-primary" id="addEmailButton">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
         }
     </div>
-    @if (isEmailLimitReached)
-    {
-        <p class="my-auto text-muted">You can add up to @maxEmails emails.</p>
-    }
+    <p id="emailLimitMessage" class="my-auto text-muted" style="display: none;">You can add up to 5 emails.</p>
 </div>
+
