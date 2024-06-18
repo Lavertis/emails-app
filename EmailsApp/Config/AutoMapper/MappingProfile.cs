@@ -17,6 +17,6 @@ public class MappingProfile : Profile
             .ForMember(p => p.Id, opt => opt.Ignore());
 
         CreateMap<PersonCreateViewModel, Person>()
-            .ForMember(p => p.Emails, opt => opt.MapFrom(vm => new[] { new Email { EmailAddress = vm.Email } }));
+            .ForMember(p => p.Emails, opt => opt.MapFrom(vm => new List<Email> { new() { EmailAddress = vm.Email } }));
     }
 }

@@ -5,11 +5,10 @@ using EmailsApp.Database.Seeders;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllersWithViews(options =>
-{
-    options.ModelBinderProviders.Insert(0, new TrimmingModelBinderProvider());
-});
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+builder.Services.AddControllersWithViews(options =>
+    options.ModelBinderProviders.Insert(0, new TrimmingModelBinderProvider())
+);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
@@ -27,7 +26,5 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.Run();

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmailsApp.Controllers;
 
-[Route("[controller]")]
+[Route("people")]
 public class PersonController : Controller
 {
     private readonly AppDbContext _dbContext;
@@ -20,13 +20,13 @@ public class PersonController : Controller
         _mapper = mapper;
     }
 
-    [HttpGet("[action]")]
+    [HttpGet("add")]
     public IActionResult Create()
     {
         return View();
     }
 
-    [HttpPost("[action]")]
+    [HttpPost("add")]
     public async Task<IActionResult> Create([FromForm] PersonCreateViewModel createViewModel)
     {
         var emailExists = await _dbContext.Emails.AnyAsync(e => e.EmailAddress == createViewModel.Email);
@@ -56,23 +56,16 @@ public class PersonController : Controller
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Details([FromRoute] int id)
     {
-        var person = await _dbContext.Persons
-            .Include(p => p.Emails)
-            .FirstOrDefaultAsync(p => p.Id == id);
+        var person = await _dbContext.Persons.FirstOrDefaultAsync(p => p.Id == id);
         if (person == null)
             return View("Error");
 
         var personDto = _mapper.Map<PersonDetailsDto>(person);
-        var emails = person.Emails
-            .OrderBy(e => e.CreatedAt)
-            .Select(e => _mapper.Map<EmailDto>(e));
-
-        var viewModel = new PersonDetailsViewModel { Person = personDto, Emails = emails.ToList() };
+        var viewModel = new PersonDetailsViewModel { Person = personDto };
         return View(viewModel);
     }
 
-
-    [HttpPost("{id:int}/[action]")]
+    [HttpPost("{id:int}/update")]
     public async Task<IActionResult> Update(int id, PersonDetailsViewModel viewModel)
     {
         if (!ModelState.IsValid)
@@ -95,7 +88,7 @@ public class PersonController : Controller
         var personCount = await _dbContext.Persons.CountAsync();
         var pageCount = (int)Math.Ceiling(personCount / (double)query.PageSize);
 
-        const int descriptionTruncationLength = 30;
+        const int descriptionTrimLength = 30;
         var personsWithFirstEmail = await _dbContext.Persons
             .OrderByDescending(p => p.Id)
             .Skip((query.Page - 1) * query.PageSize)
@@ -105,9 +98,9 @@ public class PersonController : Controller
                 Id = p.Id,
                 FirstName = p.FirstName,
                 LastName = p.LastName,
-                IsDescriptionTruncated = p.Description.Length > descriptionTruncationLength,
-                Description = p.Description.Length > descriptionTruncationLength
-                    ? p.Description.Substring(0, descriptionTruncationLength)
+                IsDescriptionTruncated = p.Description.Length > descriptionTrimLength,
+                Description = p.Description.Length > descriptionTrimLength
+                    ? p.Description.Substring(0, descriptionTrimLength)
                     : p.Description,
                 EmailAddress = p.Emails.OrderBy(e => e.CreatedAt).First().EmailAddress
             })

@@ -4,8 +4,5 @@ namespace EmailsApp.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
-    {
-        return RedirectToAction("Index", "Person");
-    }
+    public IActionResult Index() => RedirectToAction("Index", "Person");
 }
