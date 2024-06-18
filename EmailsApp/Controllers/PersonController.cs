@@ -60,7 +60,7 @@ public class PersonController : Controller
             .Include(p => p.Emails)
             .FirstOrDefaultAsync(p => p.Id == id);
         if (person == null)
-            return NotFound();
+            return View("Error");
 
         var personDto = _mapper.Map<PersonDetailsDto>(person);
         var emails = person.Emails
@@ -80,7 +80,7 @@ public class PersonController : Controller
 
         var person = await _dbContext.Persons.FindAsync(id);
         if (person == null)
-            return NotFound($"Person with id {id} not found.");
+            return View("Error");
 
         _mapper.Map(viewModel.Person, person);
         _dbContext.Persons.Update(person);
@@ -120,6 +120,6 @@ public class PersonController : Controller
             PageCount = pageCount
         };
 
-        return View(model);
+        return View("Index", model);
     }
 }
